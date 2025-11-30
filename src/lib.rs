@@ -1,11 +1,13 @@
 #![doc = include_str!("../README.md")]
 
 pub mod chat;
+mod concurrent_loading;
 mod encoding;
 mod registry;
 mod tiktoken;
 pub mod tiktoken_ext;
 
+pub use concurrent_loading::{load_harmony_encoding_from_file, load_harmony_encoding_safe};
 pub use encoding::{HarmonyEncoding, StreamableParser};
 pub use registry::load_harmony_encoding;
 pub use registry::HarmonyEncodingName;

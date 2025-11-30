@@ -48,10 +48,15 @@ pub fn load_harmony_encoding(name: HarmonyEncodingName) -> anyhow::Result<Harmon
             let n_ctx = 1_048_576; // 2^20
             let max_action_length = 524_288; // 2^19
             let encoding_ext = tiktoken_ext::Encoding::O200kHarmony;
+            
+            // Use thread-safe loading to prevent race conditions in concurrent downloads
+            // Addresses issue #6: Race condition when constructing the Encoding
+            let tokenizer = Arc::new(crate::load_harmony_encoding_safe("o200k_harmony")?);
+            
             Ok(HarmonyEncoding {
                 name: name.to_string(),
                 n_ctx,
-                tokenizer: Arc::new(encoding_ext.load()?),
+                tokenizer,
                 tokenizer_name: encoding_ext.name().to_owned(),
                 max_message_tokens: n_ctx - max_action_length,
                 max_action_length,
@@ -116,7 +121,6 @@ pub async fn load_harmony_encoding(name: HarmonyEncodingName) -> anyhow::Result<
                     FormattingToken::EndMessageDoneSampling,
                     FormattingToken::EndMessageAssistantToTool,
                 ]),
-                conversation_has_function_tools: Arc::new(AtomicBool::new(false)),
             })
         }
     }
