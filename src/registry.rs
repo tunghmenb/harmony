@@ -88,8 +88,6 @@ pub fn load_harmony_encoding(name: HarmonyEncodingName) -> anyhow::Result<Harmon
 
 #[cfg(target_arch = "wasm32")]
 pub async fn load_harmony_encoding(name: HarmonyEncodingName) -> anyhow::Result<HarmonyEncoding> {
-    use std::sync::atomic::AtomicBool;
-    
     match name {
         HarmonyEncodingName::HarmonyGptOss => {
             let n_ctx = 1_048_576; // 2^20
@@ -123,7 +121,6 @@ pub async fn load_harmony_encoding(name: HarmonyEncodingName) -> anyhow::Result<
                     FormattingToken::EndMessageDoneSampling,
                     FormattingToken::EndMessageAssistantToTool,
                 ]),
-                conversation_has_function_tools: Arc::new(AtomicBool::new(false)),
             })
         }
     }
